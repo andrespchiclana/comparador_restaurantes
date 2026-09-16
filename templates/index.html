@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Restaurantes Granada</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <main class="contenedor">
+        <header>
+            <h1>🍽️ FoodFinder Granada</h1>
+        </header>
+
+        {% if cache_borrada %}
+            <p class="aviso-cache">Caché borrada: {{ cache_eliminada }} archivos eliminados.</p>
+        {% endif %}
+
+        <form action="/buscar" method="GET">
+            
+            <p class="campo">
+                <label for="busqueda">Nombre o palabra clave</label>
+                <input type="text" id="busqueda" name="q" placeholder="Ej: tapas, pizza, paella...">
+            </p>
+            
+            <fieldset class="fila">
+                <p class="campo campo-cocina">
+                    <label for="tipo_cocina">Tipo de cocina</label>
+                    <select id="tipo_cocina" name="cocina">
+                        <option value="">Cualquiera</option>
+                        <option value="mediterranea">Mediterránea</option>
+                        <option value="italiana">Italiana</option>
+                        <option value="japonesa">Japonesa</option>
+                        <option value="tapas">Tapas</option>
+                    </select>
+                </p>
+                <p class="campo campo-precio">
+                    <label for="precio_max">Precio máx.</label>
+                    <select id="precio_max" name="precio">
+                        <option value="">Todos</option>
+                        <option value="1">€ (Económico)</option>
+                        <option value="2">€€ (Medio)</option>
+                        <option value="3">€€€ (Caro)</option>
+                    </select>
+                </p>
+            </fieldset>
+
+            <fieldset class="fila">
+                <p class="campo">
+                    <label for="zona_barrio">Zona / Barrio</label>
+                    <select id="zona_barrio" name="zona">
+                        <option value="">Toda Granada</option>
+                        <option value="Centro">Centro / Sagrario</option>
+                        <option value="Albaicin">Albaicín</option>
+                        <option value="Realejo">Realejo / San Matías</option>
+                        <option value="Zaidin">Zaidín</option>
+                        <option value="Chana">La Chana</option>
+                        <option value="Beiro">Beiro / Plaza de Toros</option>
+                        <option value="Ronda">Ronda / Camino de Ronda</option>
+                        <option value="Genil">Genil / Bola de Oro</option>
+                    </select>
+                </p>
+
+                <p class="campo">
+                    <label for="ordenar_por">Ordenar por:</label>
+                    <select id="ordenar_por" name="sort">
+                        <option value="puntuacion">Mejor Puntuación Global</option>
+                        <option value="precio_asc">Precio: Más baratos primero</option>
+                        <option value="fiabilidad">Fiabilidad: Más fuentes integradas</option>
+                    </select>
+                </p>
+            </fieldset>
+
+            <p class="campo">
+                <label for="tipo_servicio">Servicio</label>
+                <select id="tipo_servicio" name="servicio">
+                    <option value="">Cualquiera</option>
+                    <option value="comer">Solo para comer allí</option>
+                    <option value="recoger">Solo para recoger</option>
+                </select>
+            </p>
+
+            <fieldset class="filtros-booleanos">
+                <label>
+                    <input type="checkbox" name="accesibilidad" value="yes"> ♿ Accesible en silla de ruedas
+                </label>
+                <label>
+                    <input type="checkbox" name="abierto" value="yes"> 🟢 Abierto ahora
+                </label>
+                <label>
+                    <input type="checkbox" name="vegano" value="yes"> 🌱 Vegano
+                </label>
+                <label>
+                    <input type="checkbox" name="vegetariano" value="yes"> 🥗 Vegetariano
+                </label>
+            </fieldset>
+
+            <button type="submit">Integrar y Buscar</button>
+        </form>
+
+        <form action="/borrar-cache" method="POST" class="form-cache">
+            <button type="submit" class="btn-cache">Borrar caché</button>
+        </form>
+    </main>
+</body>
+</html>

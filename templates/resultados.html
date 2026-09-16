@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados Integrados</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body class="body-resultados">
+    <main class="contenedor-resultados">
+        <header class="cabecera-resultados">
+            <h1>Resultados de la búsqueda integrados</h1>
+            <a href="/" class="btn-volver">← Nueva búsqueda</a>
+        </header>
+
+        <p class="resumen-resultados">Se han encontrado {{ total_resultados }} restaurantes. Mostrando página {{ pagina_actual }} de {{ total_paginas }}.</p>
+
+        <section class="lista-resultados">
+            {% for restaurante in restaurantes %}
+                <article class="tarjeta">
+                    <header class="cabecera-tarjeta">
+                        <h2>{{ restaurante.nombre }}</h2>
+                        {% if restaurante.valoracion.puntuacion_global %}
+                            <p class="puntuacion-global">⭐ Puntuación Global: {{ restaurante.valoracion.puntuacion_global }} / 10</p>
+                        {% endif %}
+                        {% if restaurante.horario.abierto is not none %}
+                            <p class="estado-horario {% if restaurante.horario.abierto %}abierto{% else %}cerrado{% endif %}">
+                                {% if restaurante.horario.abierto %}Abierto ahora{% else %}Cerrado ahora{% endif %}
+                            </p>
+                        {% endif %}
+                    </header>
+
+                    <section class="info-principal">
+                        <p>📍 <strong>Dirección:</strong> {{ restaurante.ubicacion.direccion or 'Granada' }}</p>
+                        {% if restaurante.contacto.telefono %}
+                            <p>📞 <strong>Teléfono:</strong> {{ restaurante.contacto.telefono }}</p>
+                        {% endif %}
+                        {% if restaurante.horario.disponible %}
+                            <p title="{{ restaurante.horario.horario_completo or '' }}">🕒 <strong>Horario de hoy:</strong> {{ restaurante.horario.texto_mostrado }}</p>
+                        {% else %}
+                            <p class="dato-no-disponible">🕒 <strong>Horario:</strong> no disponible</p>
+                        {% endif %}
+                        {% if restaurante.horario.proximo_cierre %}
+                            <p>⏱️ <strong>Próximo cierre:</strong> {{ restaurante.horario.proximo_cierre }}</p>
+                        {% endif %}
+                    </section>
+                    
+                    <nav class="enlaces-sociales">
+                        {% if restaurante.ubicacion.latitud and restaurante.ubicacion.longitud %}
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ restaurante.ubicacion.latitud }},{{ restaurante.ubicacion.longitud }}" target="_blank" rel="noopener noreferrer">🧭 Cómo llegar</a>
+                        {% endif %}
+                        {% if restaurante.contacto.web %}
+                            <a href="{{ restaurante.contacto.web }}" target="_blank" rel="noopener noreferrer">🌐 Web Oficial</a>
+                        {% endif %}
+                        {% if restaurante.contacto.facebook %}
+                            <a href="{{ restaurante.contacto.facebook }}" target="_blank" rel="noopener noreferrer">🔵 Facebook</a>
+                        {% endif %}
+                        {% if restaurante.contacto.instagram %}
+                            <a href="{{ restaurante.contacto.instagram }}" target="_blank" rel="noopener noreferrer">📸 Instagram</a>
+                        {% endif %}
+                        {% if restaurante.caracteristicas.menu %}
+                            <a href="{{ restaurante.caracteristicas.menu }}" target="_blank" rel="noopener noreferrer">📋 Menú OSM</a>
+                        {% endif %}
+                    </nav>
+
+                    <ul class="detalles-lista">
+                        {% if restaurante.caracteristicas.tipo_cocina %}
+                            <li><strong>Tipo de cocina:</strong> {{ restaurante.caracteristicas.tipo_cocina }}</li>
+                        {% endif %}
+
+                        {% if restaurante.valoracion.valoracion_media or restaurante.valoracion.puntuacion_macarfi %}
+                            <li class="detalles-valoracion">
+                                {% if restaurante.valoracion.puntuacion_google %}
+                                    <span><strong>Google:</strong> {{ restaurante.valoracion.puntuacion_google }} / 10
+                                        {% if restaurante.valoracion.num_valoraciones %}
+                                            ({{ restaurante.valoracion.num_valoraciones }} reseñas)
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+                                {% if restaurante.valoracion.puntuacion_macarfi %}
+                                    <span><strong>Macarfi:</strong> {{ restaurante.valoracion.puntuacion_macarfi }} / 10</span>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                        
+                        <li class="item-precio">
+                            <strong>Precios:</strong>
+                            <span class="desglose-precio">
+                                <span>Google: {{ restaurante.precio.texto_precio_google or 'no disponible' }}</span>
+                                <span>Macarfi: {{ restaurante.precio.texto_precio_macarfi or 'no disponible' }}</span>
+                                <span>Coste estimado: {{ restaurante.precio.texto_precio_calculado or restaurante.precio.texto_mostrado }}</span>
+                            </span>
+                            {% if restaurante.precio.aviso_variacion %}
+                                <small class="aviso-precio">⚠️ El precio puede variar entre fuentes.</small>
+                            {% endif %}
+                        </li>
+
+                        {% if restaurante.valoracion.puntuacion_comida %}
+                            <li class="detalles-comida">
+                                🍽️ <strong>Comida:</strong> {{ restaurante.valoracion.puntuacion_comida }} / 10 | 
+                                🏺 <strong>Decoración:</strong> {{ restaurante.valoracion.puntuacion_decoracion }} | 
+                                🛎️ <strong>Servicio:</strong> {{ restaurante.valoracion.puntuacion_servicio }}
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                    <ul class="lista-etiquetas">
+                        {% if restaurante.caracteristicas.terraza %}
+                            <li class="etiqueta-extra">☀️ Terraza exterior</li>
+                        {% endif %}
+                        {% if restaurante.recoger %}
+                            <li class="etiqueta-extra">🛍️ Para llevar</li>
+                        {% endif %}
+                        {% if restaurante.caracteristicas.accesibilidad %}
+                            <li class="etiqueta-extra etiqueta-accesible">♿ Accesible</li>
+                        {% endif %}
+                        {% if restaurante.caracteristicas.reserva %}
+                            <li class="etiqueta-extra">📅 Reserva</li>
+                        {% endif %}
+                        
+                        {% for dieta in restaurante.caracteristicas.opciones_dieteticas %}
+                            <li class="etiqueta-extra">🌱 {{ dieta }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <footer class="fuentes-integradas">
+                        <p class="titulo-fuentes">Fuentes integradas ({{ restaurante.fuentes_integradas|length }}):</p>
+                        <ul class="lista-fuentes">
+                            {% for fuente in restaurante.fuentes_integradas %}
+                                <li class="fuente {% if 'Google' in fuente %} google {% elif 'Macarfi' in fuente %} macarfi {% else %} osm {% endif %}">
+                                    {{ fuente }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </footer>
+                </article>
+            {% else %}
+                <section class="tarjeta vacio">
+                    <h3>No se encontraron resultados</h3>
+                    <p>Intenta ajustar los filtros de búsqueda.</p>
+                </section>
+            {% endfor %}
+            
+            {% if total_paginas > 1 %}
+                <nav class="paginacion">
+                    {% if pagina_actual > 1 %}
+                        <a href="{{ url_for('buscar', page=pagina_actual-1, **base_args) }}" class="btn-pag">← Anterior</a>
+                    {% endif %}
+                    
+                    <span class="pag-actual">Página {{ pagina_actual }} de {{ total_paginas }}</span>
+                    
+                    {% if pagina_actual < total_paginas %}
+                        <a href="{{ url_for('buscar', page=pagina_actual+1, **base_args) }}" class="btn-pag">Siguiente →</a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+
+        </section>
+    </main>
+</body>
+</html>

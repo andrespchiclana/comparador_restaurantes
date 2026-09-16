@@ -1,0 +1,11 @@
+.env
+.git
+.gitignore
+.vscode
+__pycache__
+*.pyc
+cache
+*.pdf
+*.docx
+*.xlsx
+cloud
